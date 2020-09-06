@@ -1,6 +1,6 @@
 import React from 'react';
 
-function Game() {
+const Game = () => {
     return (
      <h1>THIS IS GAME.js!!!</h1>
   );
