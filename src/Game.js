@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from '@material-ui/core/Container';
 import TextField from '@material-ui/core/TextField';
+import { connect } from 'react-redux';
 
-const texts = [
+const paragraphs = [
   `You never read a book on psychology, Tippy. You didn\'t need to. You knew by some divine instinct that you can make more friends in two months by becoming genuinely interested in other people than you can in two years by trying to get other people interested in you.`,
   `I know more about the private lives of celebrities than I do about any governmental policy that will actually affect me. I'm interested in things that are none of my business, and I'm bored by things that are important to know.`,
   `A spider's body consists of two main parts: an anterior portion, the prosoma (or cephalothorax), and a posterior part, the opisthosoma (or abdomen).`,
@@ -12,13 +13,23 @@ const texts = [
 ];
 
 const setText = () => {
-  const text = texts[Math.floor(Math.random() * texts.length)];
-  const textArr = text.split(' ');
-  // const [words, setWords] = useState(textArr);
-  return text;
+  const paragraph = paragraphs[Math.floor(Math.random() * paragraphs.length)];
+  const pWords = paragraph.split(' ');
+  // const [words, setWords] = useState(pWords);
+  return paragraph;
 }
 
-const Game = () => {
+const handleChange = (e) => {
+  const inputValue = e.target.value;
+  const lastLetter = inputValue[inputValue.length - 1];
+  console.log(lastLetter);
+
+}
+
+const Game = (props) => {
+  const started = props.started;
+  const startGame = props.startGame;
+
     return (
       <Container maxWidth="sm">
       <div className="start-container">
@@ -26,11 +37,32 @@ const Game = () => {
           
         <p>{setText()}</p>
 
-        <TextField fullWidth id="outlined-basic" label="Type here" variant="outlined" />
-      
+        <TextField 
+          fullWidth id="outlined-basic" 
+          label="Type here" 
+          variant="outlined" 
+          onChange={(e) => {
+            if (!started) {
+              startGame();
+            }
+            handleChange(e);
+          }} 
+        />
+
       </div>
     </Container>
   );
 }
 
-export default Game;
+const mapStateToProps = ({ game }) => {
+  return { started: game.started };
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    // dispatching plain actions
+    startGame: () => dispatch({ type: 'START_GAME' }),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Game);
